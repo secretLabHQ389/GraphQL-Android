@@ -6,7 +6,8 @@ const {
     GraphQLID,
     GraphQLString,
     GraphQLInt,
-    GraphQLSchema
+    GraphQLSchema,
+    GraphQLNonNull
 } = graphql
 
 var userData = [
@@ -19,16 +20,16 @@ var userData = [
 
 var hobbiesData = [
     {id: '1', title: 'Programming', description: 'Make useful software'},
-    {id: '2', title: 'Weight lifting', description: 'Making muscle without blowing out organs'},
+    {id: '2', title: 'Weight lifting', description: 'Having fun'},
     {id: '3', title: 'Researching', description: 'Know the city and useful knowledge'}
 ]
 
 //Create types
 const UserType = new GraphQLObjectType({
     name: 'User',
-    description: '_/UU\_',
+    description: 'Having fun',
     fields: () => ({
-        id: {type: GraphQLID},
+        id: {type: new GraphQLNonNull(GraphQLID)},
         name: {type: GraphQLString},
         age: {type: GraphQLInt},
         profession: {type: GraphQLString}
@@ -37,7 +38,7 @@ const UserType = new GraphQLObjectType({
 
 const HobbyType = new GraphQLObjectType({
     name: 'Hobby',
-    description: '/UU',
+    description: 'Having fun',
     fields: () => ({
         id: {type: GraphQLID},
         title: {type: GraphQLString},
@@ -48,23 +49,20 @@ const HobbyType = new GraphQLObjectType({
 //Root query
 const RootQuery = new GraphQLObjectType({
     name: 'RootQueryType',
-    description: '|^U',
+    description: 'Having fun',
     fields: {
         user: {
             type: UserType,
             args: {id: {type: GraphQLString}},
             resolve(parent, args) {
                 return _.find(userData, {id: args.id})
-                //get and return data
-                // let user = {
-                //     id: '987',
-                //     age: '33',
-                //     name: 'George'
-                // }
-
-                // return user;
             }
         },
+
+        // users: {
+        //     type: UserType,
+        //     args: {}
+        // },
 
         hobby: {
             type: HobbyType,
@@ -77,6 +75,48 @@ const RootQuery = new GraphQLObjectType({
     }
 })
 
+//Mutations
+const Mutation = new GraphQLObjectType({
+    name: 'Mutation',
+    fields: {
+        createUser: {
+            type: UserType,
+            args: {
+                // id: {type: GraphQLID}
+                name: {type: GraphQLString},
+                age: {type: GraphQLInt},
+                profession: {type: GraphQLString}
+            },
+            resolve(parent, args) {
+                let user = {
+                    name: args.name,
+                    age: args.age,
+                    profession: args.profession
+                }
+                return user
+            }
+        },
+
+        createHobby: {
+            type: HobbyType,
+            args: {
+                // id: {type: GraphQLID}
+                title: {type: GraphQLString},
+                description: {type: GraphQLString}
+            },
+            resolve(parent, args) {
+                let hobby = {
+                    title: args.title,
+                    description: args.description
+                }
+                return hobby
+            }
+
+        }
+    }
+})
+
 module.exports = new GraphQLSchema({
-    query: RootQuery
+    query: RootQuery,
+    mutation: Mutation
 })
