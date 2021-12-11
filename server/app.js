@@ -1,5 +1,9 @@
+// /http://localhost:4000/graphql
+
 const express = require('express')
 const graphqlHTTP = require('express-graphql').graphqlHTTP
+//const { graphqlHTTP } = require('express-graphql')
+//npm i mongoose --save
 // const mongoose = require('mongoose')
 
 //connection string from mongoDB db:

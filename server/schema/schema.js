@@ -1,5 +1,11 @@
 const graphql = require('graphql')
 var _ = require('lodash')
+const User = require('../models/User')
+const Post = require('../models/Post')
+const Hobby = require('../models/Hobby')
+//mongoose relational schema: /watch?v=bgq7FRSPDpI
+//also 23:50- quote referencing my explanation of async await
+//as parlance for Promise rather than asynchronous code
 
 const {
     GraphQLObjectType,
@@ -88,6 +94,7 @@ const PostType = new GraphQLObjectType({
 
 //Root query
 const RootQuery = new GraphQLObjectType({
+    //use Mongoose documentation to update these:
     name: 'RootQueryType',
     description: 'Having fun',
     fields: {
@@ -96,6 +103,7 @@ const RootQuery = new GraphQLObjectType({
             args: {id: {type: GraphQLString}},
             resolve(parent, args) {
                 return _.find(userData, {id: args.id})
+                //return User.find({id: args.id})
             }
         },
 
@@ -103,6 +111,7 @@ const RootQuery = new GraphQLObjectType({
             type: new GraphQLList(UserType),
             resolve(parent, args) {
                 return userData
+                //return User.find({})
             }
         },
 
@@ -155,12 +164,25 @@ const Mutation = new GraphQLObjectType({
                 profession: {type: GraphQLString}
             },
             resolve(parent, args) {
-                let user = {
+                let user = new User({
                     name: args.name,
                     age: args.age,
                     profession: args.profession
-                }
-                return user
+                })
+                return user.save()
+            }
+        },
+
+        UpdateUser: {
+            type: UserType,
+            arg: {
+                id: {type: new GraphQLNonNull(GraphQLID)},
+                name: {type: new GraphQLNonNull(GraphQLString)},
+                age: {type: GraphQLInt},
+                profession: {type: GraphQLString}
+            },
+            resolve(parent, args) {
+
             }
         },
 
@@ -173,11 +195,11 @@ const Mutation = new GraphQLObjectType({
                 userId: {type: GraphQLID}
             },
             resolve(parent, args) {
-                let hobby = {
+                let hobby = new Hobby({
                     title: args.title,
                     description: args.description
-                }
-                return hobby
+                })
+                return hobby.save()
             }
 
         },
@@ -190,10 +212,10 @@ const Mutation = new GraphQLObjectType({
                 userId: {type: GraphQLID}
             },
             resolve(parent, args) {
-                let post = {
+                let post = new Post({
                     comment: args.title
-                }
-                return post
+                })
+                return post.save()
             }
 
         }
