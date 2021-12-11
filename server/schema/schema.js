@@ -72,10 +72,12 @@ const RootQuery = new GraphQLObjectType({
             }
         },
 
-        // users: {
-        //     type: UserType,
-        //     args: {}
-        // },
+        users: {
+            type: new GraphQLList(UserType),
+            resolve(parent, args) {
+                return userData
+            }
+        },
 
         hobby: {
             type: HobbyType,
