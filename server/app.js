@@ -3,7 +3,7 @@ const graphqlHTTP = require('express-graphql').graphqlHTTP
 // const mongoose = require('mongoose')
 
 //connection string from mongoDB db:
-// mongoose.connect('')
+// mongoose.connect('', {useNewUrlParser: true})
 // mongoose.connection.once('open', () => {
 //     console.log('DB connected')
 // })
