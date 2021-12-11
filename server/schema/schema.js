@@ -7,7 +7,8 @@ const {
     GraphQLString,
     GraphQLInt,
     GraphQLSchema,
-    GraphQLNonNull
+    GraphQLNonNull,
+    GraphQLList
 } = graphql
 
 var userData = [
@@ -19,9 +20,9 @@ var userData = [
 ]
 
 var hobbiesData = [
-    {id: '1', title: 'Programming', description: 'Make useful software'},
-    {id: '2', title: 'Weight lifting', description: 'Having fun'},
-    {id: '3', title: 'Researching', description: 'Know the city and useful knowledge'}
+    {id: '1', title: 'Programming', description: 'Make useful software', userId: '1'},
+    {id: '2', title: 'Weight lifting', description: 'Having fun', userId: '3'},
+    {id: '3', title: 'Researching', description: 'Know the city and useful knowledge', userId: '5'}
 ]
 
 //Create types
@@ -32,7 +33,8 @@ const UserType = new GraphQLObjectType({
         id: {type: new GraphQLNonNull(GraphQLID)},
         name: {type: GraphQLString},
         age: {type: GraphQLInt},
-        profession: {type: GraphQLString}
+        profession: {type: GraphQLString}//,
+        // hobbies: {type: GraphQLList}
     })
 })
 
@@ -42,7 +44,13 @@ const HobbyType = new GraphQLObjectType({
     fields: () => ({
         id: {type: GraphQLID},
         title: {type: GraphQLString},
-        description: {type: GraphQLString}
+        description: {type: GraphQLString},
+        user: {
+            type: UserType,
+            resolve(parent, args) {
+                return _.find(userData, {id: parent.userId})
+            }
+        }
     })
 })
 
@@ -66,7 +74,10 @@ const RootQuery = new GraphQLObjectType({
 
         hobby: {
             type: HobbyType,
-            args: {id: {type: GraphQLID}},
+            args: {
+                id: {type: GraphQLID}
+            },
+            //userId: {type: GraphQLID},
             resolve(parent, args) {
                 //return data for our hobby
                 return _.find(hobbiesData, {id: args.id})
@@ -102,7 +113,8 @@ const Mutation = new GraphQLObjectType({
             args: {
                 // id: {type: GraphQLID}
                 title: {type: GraphQLString},
-                description: {type: GraphQLString}
+                description: {type: GraphQLString},
+                userId: {type: GraphQLID}
             },
             resolve(parent, args) {
                 let hobby = {
