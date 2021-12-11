@@ -7,6 +7,8 @@ const Hobby = require('../models/Hobby')
 //also 23:50- quote referencing my explanation of async await
 //as parlance for Promise rather than asynchronous code
 
+//https://github.com/academind/yt-graphql-react-event-booking-api/blob/23-bugfixing/graphql/resolvers/events.js
+
 const {
     GraphQLObjectType,
     GraphQLID,
