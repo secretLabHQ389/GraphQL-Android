@@ -25,6 +25,12 @@ var hobbiesData = [
     {id: '3', title: 'Researching', description: 'Know the city and useful knowledge', userId: '5'}
 ]
 
+var postData = [
+    {id: '1', comment: 'Programming is fun', userId: '1'},
+    {id: '2', comment: 'Programming is rewarding', userId: '3'},
+    {id: '3', comment: 'Programming is useful', userId: '5'}
+]
+
 //Create types
 const UserType = new GraphQLObjectType({
     name: 'User',
@@ -39,6 +45,12 @@ const UserType = new GraphQLObjectType({
             resolve(parent, args) {
                 return _.filter(hobbiesData, {userId: parent.id})
             }
+        },
+        posts: {
+            type: new GraphQLList(PostType),
+            resolve(parent, args) {
+                return _.filter(postData, {userId: parent.id})
+            }
         }
     })
 })
@@ -50,6 +62,21 @@ const HobbyType = new GraphQLObjectType({
         id: {type: GraphQLID},
         title: {type: GraphQLString},
         description: {type: GraphQLString},
+        user: {
+            type: UserType,
+            resolve(parent, args) {
+                return _.find(userData, {id: parent.userId})
+            }
+        }
+    })
+})
+
+const PostType = new GraphQLObjectType({
+    name: 'Post',
+    description: 'Having fun',
+    fields: () => ({
+        id: {type: GraphQLID},
+        comment: {type: GraphQLString},
         user: {
             type: UserType,
             resolve(parent, args) {
@@ -86,6 +113,30 @@ const RootQuery = new GraphQLObjectType({
             },
             resolve(parent, args) {
                 return _.find(hobbiesData, {id: args.id})
+            }
+        },
+
+        hobbies: {
+            type: new GraphQLList(HobbyType),
+            resolve(parent, args) {
+                return hobbiesData
+            }
+        },
+
+        post: {
+            type: PostType,
+            args: {
+                id: {type: GraphQLID}
+            },
+            resolve(parent, args) {
+                return _.find(postData, {id: args.id})
+            }
+        },
+
+        posts: {
+            type: new GraphQLList(PostType),
+            resolve(parent, args) {
+                return postData
             }
         }
     }
@@ -127,6 +178,22 @@ const Mutation = new GraphQLObjectType({
                     description: args.description
                 }
                 return hobby
+            }
+
+        },
+
+        createPost: {
+            type: PostType,
+            args: {
+                // id: {type: GraphQLID}
+                comment: {type: GraphQLString},
+                userId: {type: GraphQLID}
+            },
+            resolve(parent, args) {
+                let post = {
+                    comment: args.title
+                }
+                return post
             }
 
         }
